@@ -83,14 +83,17 @@ def import_from_zen_money(fr):
             income_currency_id = None
 
         if len(income_account_name) > 0:
-            if income_account_name not in accounts:
+            name = unicode(
+                    'Debts ' + income_currency_short_title) if income_account_name == 'Долги' else income_account_name
+            print income_account_name, name
+            if name not in accounts:
                 accounts_id += 1
                 income_account_id = accounts_id
-                accounts[income_account_name] = {'id': income_account_id,
-                                                 'name': income_account_name,
-                                                 'currency': income_currency_id}
+                accounts[name] = {'id': income_account_id,
+                                  'name': name,
+                                  'currency': income_currency_id}
             else:
-                income_account_id = accounts[income_account_name]['id']
+                income_account_id = accounts[name]['id']
         else:
             income_account_id = None
 
@@ -106,14 +109,17 @@ def import_from_zen_money(fr):
             outcome_currency_id = None
 
         if len(outcome_account_name) > 0:
-            if outcome_account_name not in accounts:
+            name = unicode(
+                    'Debts ' + outcome_currency_short_title) \
+                if outcome_account_name == 'Долги' else outcome_account_name
+            if name not in accounts:
                 accounts_id += 1
                 outcome_account_id = accounts_id
-                accounts[outcome_account_name] = {'id': outcome_account_id,
-                                                  'name': outcome_account_name,
-                                                  'currency': outcome_currency_id}
+                accounts[name] = {'id': outcome_account_id,
+                                  'name': name,
+                                  'currency': outcome_currency_id}
             else:
-                outcome_account_id = accounts[outcome_account_name]['id']
+                outcome_account_id = accounts[name]['id']
         else:
             outcome_account_id = None
 
