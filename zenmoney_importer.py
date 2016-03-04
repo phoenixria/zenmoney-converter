@@ -85,7 +85,6 @@ def import_from_zen_money(fr):
         if len(income_account_name) > 0:
             name = unicode(
                     'Debts ' + income_currency_short_title) if income_account_name == 'Долги' else income_account_name
-            print income_account_name, name
             if name not in accounts:
                 accounts_id += 1
                 income_account_id = accounts_id
@@ -126,9 +125,17 @@ def import_from_zen_money(fr):
         transaction_type = 'UNKNOWN'
         if payee_id:
             if income_account_id:
-                transaction_type = 'BORROW'
+                if len([account for account in accounts.values() if
+                        account['id'] == outcome_account_id and account['name'].startswith('Debts')]) > 0:
+                    transaction_type = 'BORROW'
+                else:
+                    transaction_type = 'LEND'
             elif outcome_account_id:
-                transaction_type = 'LEND'
+                if len([account for account in accounts.values() if
+                        account['id'] == income_account_id and account['name'].startswith('Debts')]) > 0:
+                    transaction_type = 'LEND'
+                else:
+                    transaction_type = 'BORROW'
         elif income_account_id and not outcome_account_id:
             transaction_type = 'INCOME'
         elif outcome_account_id and not income_account_id:
