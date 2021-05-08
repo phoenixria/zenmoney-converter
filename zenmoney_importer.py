@@ -9,14 +9,16 @@ import sys
 
 def import_from_zen_money(fr):
     start_time = datetime.datetime.now()
-    print 'Import started %s' % str(start_time)
+    print('Import started %s' % str(start_time))
 
     lines = fr.readlines()
 
     count = float(len(lines))
     index = 0.0
 
-    reader = csv.reader(lines, delimiter=str(','), quotechar=str('"'))
+    reader = csv.reader(lines, delimiter=str(';'), quotechar=str('"'))
+
+    next(reader) # Skip the table header
 
     output = {}
 
@@ -42,9 +44,10 @@ def import_from_zen_money(fr):
          income,
          income_currency_short_title,
          created,
-         modified) = tuple(row)
+         modified,
+         qr_code) = tuple(row)
 
-        date_object = datetime.datetime.strptime(created.decode('utf-8-sig'), '%Y-%m-%d %H:%M:%S')
+        date_object = datetime.datetime.strptime(created, '%Y-%m-%d %H:%M:%S')
 
         outcome_sum = outcome.replace(',', '.') if len(outcome) > 0 else 0.0
         income_sum = income.replace(',', '.') if len(income) > 0 else 0.0
@@ -83,8 +86,7 @@ def import_from_zen_money(fr):
             income_currency_id = None
 
         if len(income_account_name) > 0:
-            name = unicode(
-                    'Debts ' + income_currency_short_title) if income_account_name == 'Долги' else income_account_name
+            name = 'Debts ' + income_currency_short_title if income_account_name == 'Долги' else income_account_name
             if name not in accounts:
                 accounts_id += 1
                 income_account_id = accounts_id
@@ -108,8 +110,7 @@ def import_from_zen_money(fr):
             outcome_currency_id = None
 
         if len(outcome_account_name) > 0:
-            name = unicode(
-                    'Debts ' + outcome_currency_short_title) \
+            name = 'Debts ' + outcome_currency_short_title \
                 if outcome_account_name == 'Долги' else outcome_account_name
             if name not in accounts:
                 accounts_id += 1
@@ -161,18 +162,18 @@ def import_from_zen_money(fr):
 
     finish_time = datetime.datetime.now()
 
-    print '\nImport finished %s' % str(finish_time)
-    print 'Time elapsed %f seconds.' % ((finish_time - start_time).total_seconds())
+    print ('\nImport finished %s' % str(finish_time))
+    print ('Time elapsed %f seconds.' % ((finish_time - start_time).total_seconds()))
 
-    output['currencies'] = currencies.values()
-    output['categories'] = categories.values()
-    output['accounts'] = accounts.values()
-    output['payees'] = payees.values()
+    output['currencies'] = list(currencies.values())
+    output['categories'] = list(categories.values())
+    output['accounts'] = list(accounts.values())
+    output['payees'] = list(payees.values())
     output['transactions'] = transactions
 
-    with io.open('exported.json', 'w+', encoding='utf8') as json_file:
-        data = json.dumps(output, ensure_ascii=False, encoding='utf8', indent=4, sort_keys=True)
-        json_file.write(unicode(data))
+    with io.open('exported.json', 'w+') as json_file:
+        data = json.dumps(output, ensure_ascii=False, indent=4, sort_keys=True)
+        json_file.write(data)
 
 
 if __name__ == '__main__':
