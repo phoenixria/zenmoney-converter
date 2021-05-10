@@ -137,9 +137,9 @@ def import_from_zen_money(fr):
                     transaction_type = 'LEND'
                 else:
                     transaction_type = 'BORROW'
-        elif income_account_id and not outcome_account_id:
+        elif income_account_id == outcome_account_id and float(income_sum) > 0 and float(outcome_sum) == 0:
             transaction_type = 'INCOME'
-        elif outcome_account_id and not income_account_id:
+        elif outcome_account_id == income_account_id and float(income_sum) == 0 and float(outcome_sum) > 0:
             transaction_type = 'OUTCOME'
         else:
             transaction_type = 'TRANSFER'
