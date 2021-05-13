@@ -13,12 +13,10 @@ def import_from_zen_money(fr):
 
     lines = fr.readlines()
 
-    count = float(len(lines))
+    count = float(len(lines) - 1)
     index = 0.0
 
-    reader = csv.reader(lines, delimiter=str(';'), quotechar=str('"'))
-
-    next(reader) # Skip the table header
+    reader = csv.reader(lines[1:], delimiter=str(';'), quotechar=str('"'))
 
     output = {}
 
