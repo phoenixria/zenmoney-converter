@@ -50,6 +50,12 @@ def import_from_zen_money(fr):
         outcome_sum = outcome.replace(',', '.') if len(outcome) > 0 else 0.0
         income_sum = income.replace(',', '.') if len(income) > 0 else 0.0
 
+        if outcome_sum == income_sum and (outcome_account_name == 'Долги' or income_account_name == 'Долги') and income_currency_short_title != outcome_currency_short_title:
+            if outcome_currency_short_title == 'UAH':
+                outcome_currency_short_title = income_currency_short_title
+            elif income_currency_short_title == 'UAH':
+                income_currency_short_title = outcome_currency_short_title
+
         if len(category_name) > 0:
             if category_name not in categories:
                 categories_id += 1
@@ -108,8 +114,7 @@ def import_from_zen_money(fr):
             outcome_currency_id = None
 
         if len(outcome_account_name) > 0:
-            name = 'Debts ' + outcome_currency_short_title \
-                if outcome_account_name == 'Долги' else outcome_account_name
+            name = 'Debts ' + outcome_currency_short_title if outcome_account_name == 'Долги' else outcome_account_name
             if name not in accounts:
                 accounts_id += 1
                 outcome_account_id = accounts_id
